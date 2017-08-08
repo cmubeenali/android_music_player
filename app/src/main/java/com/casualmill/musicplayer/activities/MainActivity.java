@@ -1,6 +1,7 @@
 package com.casualmill.musicplayer.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
@@ -17,12 +18,14 @@ import com.casualmill.musicplayer.adapters.MainPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 899;
+    public static Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mContext = this;
         // Permission has to be given by the user.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {

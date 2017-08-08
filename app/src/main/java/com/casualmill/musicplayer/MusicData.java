@@ -1,19 +1,25 @@
 package com.casualmill.musicplayer;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.provider.MediaStore;
 
 import com.casualmill.musicplayer.models.Album;
 import com.casualmill.musicplayer.models.Track;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 /**
  * Created by faztp on 07-Aug-17.
  */
 
-public class DataLoader {
+public class MusicData {
 
     public static ArrayList<Track> getAllTracks(Context context) {
         return getAllTracks(context, -1);
@@ -91,5 +97,17 @@ public class DataLoader {
             cursor.close();
 
         return arrayList;
+    }
+
+
+    public static Bitmap getAlbumCoverArt(Context context, long album_id) {
+        try {
+            Uri sArtworkUri = Uri.parse("content://media/external/audio/albumart");
+            Uri uri = ContentUris.withAppendedId(sArtworkUri, album_id);
+            ContentResolver res = context.getContentResolver();
+            InputStream in = res.openInputStream(uri);
+            return BitmapFactory.decodeStream(in);
+        } catch (Exception e) {}
+        return null;
     }
 }
