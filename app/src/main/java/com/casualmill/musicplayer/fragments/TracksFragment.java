@@ -37,7 +37,7 @@ public class TracksFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_tracks, container, false);
 
         // More information about RecyclerView at https://developer.android.com/training/material/lists-cards.html
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.tracks_recyclerView);
+        RecyclerView recyclerView = rootView.findViewById(R.id.tracks_recyclerView);
         // size wont change based on size of child items. set it true for optimization since thats our case
         recyclerView.setHasFixedSize(true);
         // we will have a linear list
