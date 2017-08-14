@@ -1,5 +1,9 @@
 package com.casualmill.musicplayer.adapters;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.os.PowerManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.casualmill.musicplayer.MusicData;
+import com.casualmill.musicplayer.MusicPlayer;
 import com.casualmill.musicplayer.R;
+import com.casualmill.musicplayer.Services.MusicService;
 import com.casualmill.musicplayer.activities.MainActivity;
 import com.casualmill.musicplayer.models.Track;
+import com.casualmill.musicplayer.Services.MusicService;
 
 import java.util.ArrayList;
 
@@ -21,15 +28,29 @@ import java.util.ArrayList;
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder>{
 
     private ArrayList<Track> tracks;
+    private Context ctx;
 
-    public TrackAdapter(ArrayList<Track> _tracks) {
+    public TrackAdapter(ArrayList<Track> _tracks, Context ctx) {
         this.tracks = _tracks;
+        this.ctx=ctx;
+
+        MusicPlayer.setServiceTrackList(this.tracks);
+
     }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track, parent, false);
+        final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track, parent, false);
         Holder hl = new Holder(v);
+
+
+//        v.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
         return hl;
     }
 
@@ -54,11 +75,13 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder>{
             this.title = itemView.findViewById(R.id.item_track_title);
             this.artist = itemView.findViewById(R.id.item_track_artist);
             this.albumArt = itemView.findViewById(R.id.item_track_albumArt);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-
+            MusicPlayer.playTrackAtIndex(getAdapterPosition());
         }
     }
 }

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.casualmill.musicplayer.MusicData;
+import com.casualmill.musicplayer.MusicPlayer;
 import com.casualmill.musicplayer.R;
 import com.casualmill.musicplayer.adapters.TrackAdapter;
 import com.casualmill.musicplayer.models.Track;
@@ -55,10 +56,11 @@ public class TracksFragment extends Fragment {
             @Override
             public void run() {
                 final ArrayList<Track> tracks = MusicData.getAllTracks(_ref.getContext());
+                MusicPlayer.setServiceTrackList(tracks);
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        TrackAdapter trackAdapter = new TrackAdapter(tracks);
+                        TrackAdapter trackAdapter = new TrackAdapter(tracks,getActivity().getApplicationContext());
                         RecyclerView recyclerView = _ref.rootView.findViewById(R.id.tracks_recyclerView);
                         recyclerView.setAdapter(trackAdapter);
                     }

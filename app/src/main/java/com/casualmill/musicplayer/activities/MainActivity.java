@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.casualmill.musicplayer.MusicPlayer;
 import com.casualmill.musicplayer.R;
 import com.casualmill.musicplayer.adapters.MainPagerAdapter;
 
@@ -71,5 +72,11 @@ public class MainActivity extends AppCompatActivity {
         //TabLayout
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(pager);
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        MusicPlayer.init(getApplicationContext());
     }
 }
