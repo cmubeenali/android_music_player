@@ -93,8 +93,21 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return false;
     }
 
+    public void playNext() {
+        if (trackPosition < tracks.size() - 1)
+        {
+            trackPosition++;
+        } else {
+            trackPosition = 0;
+        }
+        PlayTrack();
+    }
+
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
+
+        playNext();
+
 
     }
 
