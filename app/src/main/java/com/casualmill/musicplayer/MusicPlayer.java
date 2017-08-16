@@ -4,7 +4,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.MediaPlayer;
 import android.os.IBinder;
+import android.provider.MediaStore;
 
 import com.casualmill.musicplayer.Services.MusicService;
 import com.casualmill.musicplayer.models.Track;
@@ -23,7 +25,6 @@ public class MusicPlayer {
     private static Context context;
     private static ArrayList<Track> currentPlayList;
 
-
     public static void init(Context ctx) {
         context = ctx;
         if (musicIntent == null) {
@@ -39,13 +40,47 @@ public class MusicPlayer {
         for (Track t : tracks) {
             ids.add(t.id);
         }
-        if (serviceBound)
-            musicService.setTracks(ids);
+        if (serviceBound) {
+            musicService.track_ids = ids;
+            musicService.trackPosition = 0;
+        }
     }
 
     public static void playTrackAtIndex(int index){
-        musicService.setTrackPosition(index);
-        musicService.PlayTrack();
+        musicService.trackPosition = index;
+        musicService.playTrack();
+    }
+
+    public static boolean playPause() {
+        if (musicService.player.isPlaying())
+            musicService.player.pause();
+        else
+            musicService.player.start();
+
+        return musicService.player.isPlaying();
+    }
+
+    public static void playNext() {
+        musicService.playNext();
+    }
+
+    public static void playPrevious() {
+        musicService.playPrevious();
+    }
+
+    public static void seekToPosition(int pos) {
+        int position = (int)(musicService.player.getDuration() * (pos / 100f));
+        musicService.player.seekTo(position);
+    }
+
+    // Returns progress in [0, 100]
+    public static int getProgress() {
+        if (serviceBound) {
+            MediaPlayer player = musicService.player;
+            return player.getCurrentPosition() * 100 / player.getDuration();
+        } else {
+            return 0;
+        }
     }
 
     private static ServiceConnection musicConnection = new ServiceConnection() {
