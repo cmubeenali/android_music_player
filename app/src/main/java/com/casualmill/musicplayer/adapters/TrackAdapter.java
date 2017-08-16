@@ -60,7 +60,7 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder>{
 
         holder.title.setText(tr.title);
         holder.artist.setText(tr.artistName);
-        holder.albumArt.setImageBitmap(MusicData.getAlbumCoverArt(MainActivity.mContext, tr.albumId));
+        holder.albumArt.setImageBitmap(MusicData.getAlbumCoverArt(holder.itemView.getContext(), tr.albumId));
     }
 
     @Override

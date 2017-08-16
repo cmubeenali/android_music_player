@@ -23,9 +23,9 @@ import java.util.ArrayList;
 
 public class MusicService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,MediaPlayer.OnCompletionListener {
 
-    private MediaPlayer player;
-    ArrayList<Long> tracks;
-    int trackPosition=0;
+    public MediaPlayer player;
+    public ArrayList<Long> track_ids;
+    public int trackPosition = 0;
 
     private final IBinder serviceBinder = new MusicBinder();
 
@@ -39,7 +39,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void InitializeMusicPlayer()
     {
         //Initializing MusicPlayer and its properties
-        player=new MediaPlayer();
+        player = new MediaPlayer();
 
         // WAKELOCK permission is required to use this method
         // Keeps the phone awake partially to allow the playback
@@ -53,11 +53,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         player.setOnErrorListener(this);
     }
 
-    public void PlayTrack(){
+    public void playTrack(){
         player.reset();
 
         //get trackId to play
-        long trackId=tracks.get(trackPosition);
+        long trackId=track_ids.get(trackPosition);
         Uri trackUri= ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,trackId);
 
         try{
@@ -70,14 +70,24 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     }
 
-    public void setTracks(ArrayList<Long> tracks){
-        this.tracks=tracks;
-        this.trackPosition=0;
+    public void playNext() {
+        if (track_ids == null || track_ids.size() == 0)
+            return;
+        else if (trackPosition == track_ids.size())
+            trackPosition = 0;
+        else
+            trackPosition++;
+        playTrack();
     }
 
-    public void setTrackPosition(int trackPosition){
-        this.trackPosition=1;
-        this.trackPosition=trackPosition;
+    public void playPrevious() {
+        if (track_ids == null || track_ids.size() == 0)
+            return;
+        else if (trackPosition == 0)
+            trackPosition = track_ids.size() - 1;
+        else
+            trackPosition--;
+        playTrack();
     }
 
     @Nullable
@@ -95,7 +105,8 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onCompletion(MediaPlayer mediaPlayer) {
-
+        player.reset();
+        playNext();
     }
 
     @Override

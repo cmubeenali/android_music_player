@@ -11,6 +11,9 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
 
 import com.casualmill.musicplayer.MusicPlayer;
 import com.casualmill.musicplayer.R;
@@ -19,14 +22,27 @@ import com.casualmill.musicplayer.adapters.MainPagerAdapter;
 public class MainActivity extends AppCompatActivity {
 
     private static final int EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 899;
-    public static Context mContext;
+
+    // for
+    private boolean isPaused;
+    private Handler handler = new Handler();
+    private SeekBar seekBar;
+    Runnable onEverySecond = new Runnable() {
+
+        @Override
+        public void run() {
+            if(!isPaused){
+                seekBar.setProgress(MusicPlayer.getProgress());
+                handler.postDelayed(onEverySecond, 600);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mContext = this;
         // Permission has to be given by the user.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -72,11 +88,65 @@ public class MainActivity extends AppCompatActivity {
         //TabLayout
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabLayout);
         tabLayout.setupWithViewPager(pager);
+
+        // Play Button
+        Button playButton = (Button)findViewById(R.id.button_play);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean playing = MusicPlayer.playPause();
+                // change the picture based on playing bool
+            }
+        });
+
+        Button prevButton = (Button)findViewById(R.id.button_prev);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MusicPlayer.playPrevious();
+            }
+        });
+
+        Button nextButton = (Button)findViewById(R.id.button_next);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                MusicPlayer.playNext();
+            }
+        });
+
+        // Seeker
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                // default [0,100]
+                if (b) // user changed
+                    MusicPlayer.seekToPosition(i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) { }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) { }
+        });
     }
 
     @Override
     protected void onStart(){
         super.onStart();
         MusicPlayer.init(getApplicationContext());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isPaused = false;
+        handler.postDelayed(onEverySecond, 1000);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isPaused = true;
     }
 }
