@@ -43,14 +43,6 @@ public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.Holder>{
         final View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_track, parent, false);
         Holder hl = new Holder(v);
 
-
-//        v.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
         return hl;
     }
 

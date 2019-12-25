@@ -25,6 +25,7 @@ import java.util.ArrayList;
 public class TracksFragment extends Fragment {
 
     public View rootView;
+    public long album_id=0;
 
     public TracksFragment() {
         // Required empty public constructor
@@ -44,7 +45,10 @@ public class TracksFragment extends Fragment {
         // we will have a linear list
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        LoadTracks();
+        if(getArguments()!=null)
+            album_id=getArguments().getLong("album_id");
+        this.LoadTracks();
+
         return rootView;
     }
 
@@ -52,22 +56,41 @@ public class TracksFragment extends Fragment {
     public void LoadTracks() {
         final TracksFragment _ref = this;
 
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                final ArrayList<Track> tracks = MusicData.getAllTracks(_ref.getContext());
-                MusicPlayer.setServiceTrackList(tracks);
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        TrackAdapter trackAdapter = new TrackAdapter(tracks,getActivity().getApplicationContext());
-                        RecyclerView recyclerView = _ref.rootView.findViewById(R.id.tracks_recyclerView);
-                        recyclerView.setAdapter(trackAdapter);
-                    }
-                });
-            }
-        });
-        t.start();
+        if(album_id==0){
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final ArrayList<Track> tracks = MusicData.getAllTracks(_ref.getContext());
+                    MusicPlayer.setServiceTrackList(tracks);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TrackAdapter trackAdapter = new TrackAdapter(tracks,getActivity().getApplicationContext());
+                            RecyclerView recyclerView = _ref.rootView.findViewById(R.id.tracks_recyclerView);
+                            recyclerView.setAdapter(trackAdapter);
+                        }
+                    });
+                }
+            });
+            t.start();
+        }else if(album_id!=0){
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final ArrayList<Track> tracks = MusicData.getAllTracks(_ref.getContext(),album_id);
+                    MusicPlayer.setServiceTrackList(tracks);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            TrackAdapter trackAdapter = new TrackAdapter(tracks,getActivity().getApplicationContext());
+                            RecyclerView recyclerView = _ref.rootView.findViewById(R.id.tracks_recyclerView);
+                            recyclerView.setAdapter(trackAdapter);
+                        }
+                    });
+                }
+            });
+            t.start();
+        }
     }
 
 }

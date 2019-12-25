@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.casualmill.musicplayer.fragments.TracksFragment">
+    tools:context="com.casualmill.musicplayer.fragments.TracksFragment"
+    android:id="@+id/fragment_tracks_res">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
